@@ -15,6 +15,13 @@ st.write(
     """
 )
 
+with open ("update.csv", "r") as f:
+    update = f.read()
+
+st.markdown('Last update: <b style = "font-size: 0.9REM"><i>{}</i></b>'.format(update), unsafe_allow_html=True)
+
+
+
 def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     """
     Adds a UI on top of a dataframe to let viewers filter columns
@@ -25,7 +32,8 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pd.DataFrame: Filtered dataframe
     """
-    modify = st.checkbox("Add filters")
+    modify = st.checkbox("Add search boxes to filter data")
+    
 
     if not modify:
         #if I want return data frame or write data frame
@@ -48,7 +56,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     modification_container = st.container()
 
     with modification_container:
-        to_filter_columns = st.multiselect("Filter dataframe on", df.columns,default=df.columns[1])
+        to_filter_columns = st.multiselect("Choose columns to filter dataframe on", df.columns,default=df.columns[1])
         for column in to_filter_columns:
             left, right = st.columns((1, 20))
             left.write("↳")
@@ -106,8 +114,12 @@ df = df.loc[:,["Year","full_authors","Title","short_citation","Abstract", "Keywo
 #If I want to display table as html with hyperlink after searching
 #  filter_dataframe(df)
 
-with open ("update.csv", "r") as f:
-    update = f.read()
-st.markdown('<b style = "font-size:1REM; color:tomato;">{}</b> articles | Last updated: <b style = "font-size: 0.9REM"><i>{}</i></b>'.format(len(df),update), unsafe_allow_html=True)
+df2 = filter_dataframe(df).copy()
 
-st.dataframe(filter_dataframe(df).style.format({"PMID":"{:.0f}"}), height=500)
+col1, col2,col3 = st.columns([2,2,4])
+with col2:
+    st.download_button("download table", df2.to_csv(index=False).encode("utf-8"),"pub.csv")
+with col1:
+    st.markdown('<b style = "font-size:1REM; color:tomato;">{}</b> articles'.format(len(df2)), unsafe_allow_html=True)
+
+st.dataframe(df2.set_index(df2.columns[0]), height=300)

@@ -122,4 +122,4 @@ with col2:
 with col1:
     st.markdown('<b style = "font-size:1REM; color:tomato;">{}</b> articles'.format(len(df2)), unsafe_allow_html=True)
 
-st.dataframe(df2.set_index(df2.columns[0]), height=300)
+st.dataframe(df2.set_index(df2.columns[0]), height=400)

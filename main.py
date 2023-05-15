@@ -107,4 +107,4 @@ df = df.loc[:,["Year","full_authors","Title","short_citation","Abstract", "Keywo
 #If I want to display table as html with hyperlink after searching
 #  filter_dataframe(df)
 
-st.dataframe(filter_dataframe(df).style.format({"PMID":"{:.0f}"}), height=500)
+st.dataframe(filter_dataframe(df).style.format({"PMID":"{:.0f}"}), height=1000)

@@ -15,7 +15,6 @@ st.write(
     """
 )
 
-
 def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     """
     Adds a UI on top of a dataframe to let viewers filter columns
@@ -49,7 +48,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     modification_container = st.container()
 
     with modification_container:
-        to_filter_columns = st.multiselect("Filter dataframe on", df.columns)
+        to_filter_columns = st.multiselect("Filter dataframe on", df.columns,default=df.columns[1])
         for column in to_filter_columns:
             left, right = st.columns((1, 20))
             left.write("↳")
@@ -89,7 +88,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                     df = df.loc[df[column].between(start_date, end_date)]
             else:
                 user_text_input = right.text_input(
-                    f"Substring or regex in {column}",
+                    f"Substring or regex in {column}", placeholder="Type search terms here"
                 )
                 if user_text_input:
                     df = df[df[column].str.contains(user_text_input)]
@@ -107,4 +106,8 @@ df = df.loc[:,["Year","full_authors","Title","short_citation","Abstract", "Keywo
 #If I want to display table as html with hyperlink after searching
 #  filter_dataframe(df)
 
-st.dataframe(filter_dataframe(df).style.format({"PMID":"{:.0f}"}))
+with open ("update.csv", "r") as f:
+    update = f.read()
+st.markdown('<b style = "font-size:1REM; color:tomato;">{}</b> articles | Last updated: <b style = "font-size: 0.9REM"><i>{}</i></b>'.format(len(df),update), unsafe_allow_html=True)
+
+st.dataframe(filter_dataframe(df).style.format({"PMID":"{:.0f}"}), height=500)

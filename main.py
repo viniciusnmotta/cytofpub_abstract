@@ -7,6 +7,8 @@ from pandas.api.types import (
     is_object_dtype,
 )
 
+st. set_page_config(layout="wide")
+
 st.markdown('<h1 style = "color:Green;">CyTOF publications</h1>', unsafe_allow_html=True)
 st.markdown('<p style="color: Blue;">by Vinicius Motta</p>', unsafe_allow_html=True)
 

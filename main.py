@@ -111,7 +111,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 
 df = pd.read_csv(
     "publication_abstract_merged.csv"
-)
+).fillna("---")
 df = df.loc[:,["Year","full_authors","Title","short_citation","Abstract", "Keyword",'link']]
 #If I want to display table as html with hyperlink after searching
 #  filter_dataframe(df)

@@ -1,5 +1,6 @@
 import pandas as pd
 import streamlit as st
+import numpy as np
 from pandas.api.types import (
     is_categorical_dtype,
     is_datetime64_any_dtype,
@@ -7,7 +8,7 @@ from pandas.api.types import (
     is_object_dtype,
 )
 
-st. set_page_config(layout="wide")
+st. set_page_config(layout="wide",)
 
 st.markdown('<h1 style = "color:Green;">CyTOF publications</h1>', unsafe_allow_html=True)
 st.markdown('<p style="color: Blue;">by Vinicius Motta</p>', unsafe_allow_html=True)
@@ -113,15 +114,69 @@ df = pd.read_csv(
     "publication_abstract_merged.csv"
 ).fillna("---")
 df = df.loc[:,["Year","full_authors","Title","short_citation","Abstract", "Keyword",'link']]
-#If I want to display table as html with hyperlink after searching
+
 #  filter_dataframe(df)
+# df2 = filter_dataframe(df).copy()
+df2 = df.copy()
 
-df2 = filter_dataframe(df).copy()
 
+
+# with col2:
+#     st.download_button("download table", df2.to_csv(index=False).encode("utf-8"),"pub.csv")
+# with col1:
+#     st.markdown('<b style = "font-size:1REM; color:tomato;">{}</b> articles'.format(len(df2)), unsafe_allow_html=True)
+
+# st.dataframe(df2.set_index(df2.columns[0]), 
+#              column_config = {
+#                  "full_authors": st.column_config.TextColumn("Authors", width = "medium", max_chars = 10),
+#                  "Title": st.column_config.TextColumn("Title", width = "large"),
+#                  "link": st.column_config.LinkColumn("link")
+#              },
+#              height=400)
+# st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("<h4>Search by keywords for each column as AND logical operator:</h4>", unsafe_allow_html=True)
+# st.markdown("<br>", unsafe_allow_html=True)
+
+
+s_col1, s_col2, s_col3, s_col4, s_col5 = st.columns(5)
 col1, col2,col3 = st.columns([2,2,4])
-with col2:
-    st.download_button("download table", df2.to_csv(index=False).encode("utf-8"),"pub.csv")
-with col1:
-    st.markdown('<b style = "font-size:1REM; color:tomato;">{}</b> articles'.format(len(df2)), unsafe_allow_html=True)
+### test to create a search box for each column
+# if I want to do OR operation
+# author = df2["full_authors"].apply(lambda x: True if any(i in x for i in author) else False)
+# if I want to do like AND use all()
+with s_col1:
+    author = st.text_input("Author", "").split()
+    author = df2["full_authors"].str.lower().apply(lambda x: True if all(i.lower() in x for i in author) else False)
 
-st.dataframe(df2.set_index(df2.columns[0]), height=400)
+with s_col2:
+    title = st.text_input("Title", "").split()
+    title = df2["Title"].str.lower().apply(lambda x: True if all(i.lower() in x for i in title) else False)
+
+with s_col3:
+    abstract = st.text_input("Abstract", "").split()
+    abstract = df2["Abstract"].str.lower().apply(lambda x: True if all(i.lower() in x for i in abstract) else False)
+
+with s_col4:
+    citation = st.text_input("Citation", "").split()
+    citation = df2["short_citation"].str.lower().apply(lambda x: True if all(i.lower() in x for i in citation) else False)
+
+with s_col5:
+    keyword = st.text_input("Keyword", "").split()
+    keyword = df2["Keyword"].str.lower().apply(lambda x: True if all(i.lower() in x for i in keyword) else False)
+
+# st.markdown("<br>", unsafe_allow_html=True)
+sel = author & title & abstract & citation & keyword
+st.dataframe(df2[sel],
+                column_config={
+                    "full_authors": st.column_config.TextColumn("Authors", width="medium"),
+                    "link": st.column_config.LinkColumn("Link"),
+                    "Year": st.column_config.NumberColumn("Year", format="%d")
+                }, 
+                column_order=("Year", "full_authors", "Title", "Abstract", "short_citation","Keyword", "link"),
+                hide_index=True
+                )
+
+with col1:
+    st.markdown('<b style = "font-size:1REM; color:tomato;">{}</b> articles'.format(len(df2[sel])), unsafe_allow_html=True)
+with col2:
+    st.download_button("download table", df2[sel].to_csv(index=False).encode("utf-8"),"pub.csv")

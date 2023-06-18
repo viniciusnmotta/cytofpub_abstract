@@ -11,17 +11,17 @@ from pandas.api.types import (
 st. set_page_config(layout="wide",)
 
 st.markdown('<h1 style = "color:Green;">CyTOF publications</h1>', unsafe_allow_html=True)
-st.markdown('<p style="color: Blue;">by Vinicius Motta</p>', unsafe_allow_html=True)
+st.markdown('<p style="color: #DCD427;">by Vinicius Motta</p>', unsafe_allow_html=True)
 
 st.write(
-    """***Publications were retrieved from a pubmed search using "cytof" or "mass cytometry" as keywords***
+    """***Publications were retrieved from a pubmed search using "cytof" or "mass cytometry" as keywords.***
     """
 )
 
 with open ("update.csv", "r") as f:
     update = f.read()
 
-st.markdown('Last update: <b style = "font-size: 0.9REM"><i>{}</i></b>'.format(update), unsafe_allow_html=True)
+st.markdown('Last update: <b style = "color: #087099; font-size: 1.2REM"><i>{}</i></b>'.format(update), unsafe_allow_html=True)
 
 
 
@@ -134,7 +134,12 @@ df2 = df.copy()
 #              },
 #              height=400)
 # st.markdown("<br>", unsafe_allow_html=True)
-st.markdown("<h4>Search by keywords for each column as AND logical operator:</h4>", unsafe_allow_html=True)
+st.markdown('''<h6>- Use keywords for each column to search for publications.<br>
+            - More than one keyword can be used in each searching box.<br> 
+            - For example, use <i><b>Cancer Breast Imaging</i> in the Title box.<br>
+            - Don't use words like 'AND' 'OR'.<br>
+            - Results are returned on AND logical operation for all keywords.<br>
+            - Tip: double click each cell to expand and read the full content. Double click cells in the Link column creates a hyperlink </h6>''', unsafe_allow_html=True)
 # st.markdown("<br>", unsafe_allow_html=True)
 
 
@@ -170,7 +175,11 @@ st.dataframe(df2[sel],
                 column_config={
                     "full_authors": st.column_config.TextColumn("Authors", width="medium"),
                     "link": st.column_config.LinkColumn("Link"),
-                    "Year": st.column_config.NumberColumn("Year", format="%d")
+                    "Year": st.column_config.NumberColumn("Year", format="%d"),
+                    # "short_citation": st.column_config.TextColumn("Citation", width="small"),
+                    "Abstract": st.column_config.TextColumn("Abstract", width="medium"),
+                    "Title": st.column_config.TextColumn('Title', width="large"),
+                    "Keyword": st.column_config.TextColumn("Keywords", width="small")
                 }, 
                 column_order=("Year", "full_authors", "Title", "Abstract", "short_citation","Keyword", "link"),
                 hide_index=True

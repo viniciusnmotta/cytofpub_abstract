@@ -114,6 +114,7 @@ df = pd.read_csv(
     "publication_abstract_merged.csv"
 ).fillna("---")
 df = df.loc[:,["Year","full_authors","Title","short_citation","Abstract", "Keyword",'link']]
+df["Keyword"] = df["Keyword"].str.replace("Keywords: ","")
 
 #  filter_dataframe(df)
 # df2 = filter_dataframe(df).copy()
@@ -134,12 +135,22 @@ df2 = df.copy()
 #              },
 #              height=400)
 # st.markdown("<br>", unsafe_allow_html=True)
-st.markdown('''<h6>- Use keywords for each column to search for publications.<br>
-            - More than one keyword can be used in each searching box.<br> 
-            - For example, use <i><b>Cancer Breast Imaging</i> in the Title box.<br>
-            - Don't use words like 'AND' 'OR'.<br>
-            - Results are returned on AND logical operation for all keywords.<br>
-            - Tip: double click each cell to expand and read the full content. Double click cells in the Link column creates a hyperlink </h6>''', unsafe_allow_html=True)
+text_1, text_2 = st.columns(2)
+with text_1:
+    st.markdown('''<h6>- Use keywords for each column to search for publications.<br>
+                - More than one keyword can be used in each searching box.<br> 
+                - For example, use <i><b>Cancer Breast Imaging</i> in the Title box.<br>
+                - Don't use words like 'AND' 'OR'.<br>
+                - Results are returned based on AND logical operation for all keywords.</h6>''', unsafe_allow_html=True)
+    
+with text_2:
+    st.markdown(
+                '''<h6>Tips:<br>
+                -Double click each cell to expand and read the full content.<br>
+                -Double click cells in the Link column creates a hyperlink. <br>
+                -Columns width can be adjusted<br>
+                -Click on columns' header to sort cells.</h6>''', unsafe_allow_html=True 
+    )
 # st.markdown("<br>", unsafe_allow_html=True)
 
 
